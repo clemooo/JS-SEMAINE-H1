@@ -1,12 +1,12 @@
 let settings={
   speed:3,
-  width:900,
+  width:1200,
   height:900,
   margin:150,
-  gravity:1.1,
+  gravity: 0.3,
   friction:0.92,
-  jump:5,
-  gap:150,
+  jump:2.5,
+  gap:200,
   obsWidth:100,
   obsHeight:900
 }
@@ -104,7 +104,6 @@ function refresh()
 
       if(pipe[i].x == player.x+1){
         player.score=player.score+1
-        console.log(player.score)
       }
       pipe[i].x-=settings.speed
     }
@@ -115,14 +114,16 @@ function refresh()
     // Building landscape
     ctx.beginPath()
     ctx.rect(0, settings.height-settings.margin+player.height, settings.width, settings.margin)
-    ctx.fillStyle="blue"
+    ctx.fillStyle="orange"
     ctx.fill()
     ctx.closePath()
 
     // Score
-    ctx.font = "60px Arial";
-    ctx.fillText(player.score, 10, 60);
-
+    ctx.beginPath()
+    ctx.fillStyle="orange"
+    ctx.font = "60px Arial"
+    ctx.fillText(player.score, 10, 60)
+    ctx.closePath()
     // Loose conditions
 
     if (player.loose){
@@ -134,7 +135,7 @@ function refresh()
 function addObs(){
   pipe.unshift({
      x : settings.width,
-     y : Math.floor(Math.random()*settings.obsHeight)-settings.obsHeight
+     y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350
  });
 }
 
