@@ -1,16 +1,15 @@
 let settings={
   speed:3,
   width:900,
-  height:700,
+  height:900,
   margin:150,
   gravity:1.5,
   friction:0.92,
   jump:5,
   gap:150,
   obsWidth:125,
-  obsHeight:300
+  obsHeight:700
 }
-settings.obsHeight=(settings.height-settings.gap)/2
 
 let player={
   height:32,
@@ -33,7 +32,7 @@ let ctx = canvas.getContext("2d")
 let pipe=[]
 pipe[0]={
   x:settings.width,
-  y:0
+  y:-350
 }
 
 let controller={
@@ -84,15 +83,17 @@ function refresh()
 
       let constant = settings.obsHeight+settings.gap
 
-      ctx.clearRect(pipe[i].x+settings.speed, pipe[i].y+constant-1, settings.obsWidth, settings.obsHeight)
+      ctx.clearRect(pipe[i].x+settings.speed, pipe[i].y+constant, settings.obsWidth, settings.obsHeight)
       ctx.beginPath()
       ctx.rect(pipe[i].x, pipe[i].y+constant, settings.obsWidth, settings.obsHeight)
       ctx.fillStyle = "green"
       ctx.fill()
       ctx.closePath()
 
+
+
       if(player.x>pipe[i].x && (player.y <= pipe[i].y + settings.obsHeight)){
-        console.log("perdu")
+
       }
 
       pipe[i].x-=settings.speed
@@ -120,3 +121,12 @@ function refresh()
 window.addEventListener("keyup", controller.keyListener)
 window.addEventListener("keydown", controller.keyListener)
 window.requestAnimationFrame(refresh)
+
+function addObs(){
+  pipe.unshift({
+     x : settings.width,
+     y : Math.floor(Math.random()*settings.obsHeight)-settings.obsHeight
+ });
+}
+
+itv=setInterval(function(e){addObs()},3000)
