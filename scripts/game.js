@@ -1,14 +1,19 @@
 let settings={
-  speed:3,
+  speed:9,
+  speedDefault:9,
+  speedBoost:20,
   width:1200,
   height:900,
   margin:150,
   gravity: 0.3,
   friction:0.92,
   jump:2.5,
-  gap:200,
-  obsWidth:100,
-  obsHeight:900
+  gapMax:200,
+  gapMin: 120,
+  gapDifficulty:3,
+  obsWidth:10,
+  obsHeight:900,
+  obsIntval:900
 }
 
 let player={
@@ -28,7 +33,8 @@ let tabObs=[]
 let pipe=[]
 pipe[0]={
   x:settings.width,
-  y:-600
+  y:-600,
+  gap:settings.gapMax
 }
 
 // Images import
@@ -53,7 +59,10 @@ let controller={
     let keyState=(event.type=="keydown")?true:false;
     switch (event.keyCode){
       case 38: // Up
-        controller.up= keyState
+        controller.up = keyState
+      break;
+      case 40:
+        controller.down = keyState
       break;
     }
   }
@@ -64,9 +73,14 @@ function refresh()
 {
     // Background
     ctx.drawImage(bgImg,0,0);
-    // Jump
+    // up
     if(controller.up==true){
       player.velY-=settings.jump
+      player.jumping=true
+    }
+    // Down
+    if(controller.down==true){
+      player.velY+=settings.jump
       player.jumping=true
     }
     // Player Physics
@@ -93,7 +107,7 @@ function refresh()
       ctx.fill()
       ctx.closePath()
 
-      let constant = settings.obsHeight+settings.gap
+      let constant = settings.obsHeight+pipe[i].gap
 
       ctx.clearRect(pipe[i].x+settings.speed, pipe[i].y+constant, settings.obsWidth, settings.obsHeight)
       ctx.beginPath()
@@ -101,9 +115,22 @@ function refresh()
       ctx.fillStyle = "green"
       ctx.fill()
       ctx.closePath()
-
       if(pipe[i].x == player.x+1){
         player.score=player.score+1
+        if(pipe[i].gap<=settings.gapMin){
+          pipe.push({
+             x : settings.width,
+             y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350,
+             gap : settings.gapMin
+         })
+        }else{
+          pipe.push({
+             x : settings.width,
+             y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350,
+             gap : settings.gapMax-1*settings.gapDifficulty
+         })
+        }
+
       }
       pipe[i].x-=settings.speed
     }
@@ -132,15 +159,6 @@ function refresh()
     window.requestAnimationFrame(refresh);
 }
 
-function addObs(){
-  pipe.unshift({
-     x : settings.width,
-     y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350
- });
-}
-
 window.addEventListener("keyup", controller.keyListener)
 window.addEventListener("keydown", controller.keyListener)
-
-intervalObs=setInterval(function(e){addObs()},3500)
 window.requestAnimationFrame(refresh);
