@@ -3,38 +3,49 @@ let settings={
   width:900,
   height:900,
   margin:150,
-  gravity:1.5,
+  gravity:1.1,
   friction:0.92,
   jump:5,
   gap:150,
-  obsWidth:125,
-  obsHeight:700
+  obsWidth:100,
+  obsHeight:900
 }
 
 let player={
-  height:32,
-  width:32,
+  height:50,
+  width:68,
   x:200,
   y:settings.height/2,
   velX:0,
   velY:0,
-  jumping:false
+  jumping:false,
+  loose:false,
+  score:0
 }
 
+// Obstacle stockage
 let tabObs=[]
+let pipe=[]
+pipe[0]={
+  x:settings.width,
+  y:-600
+}
+
+// Images import
+let playerImg = new Image()
+let bgImg = new Image()
+playerImg.src = "./images/player.png"
+bgImg.src = "./images/bg.png"
+
+// Canvas setup
 let body = document.querySelector("body")
 let canvas = document.createElement("canvas")
 canvas.setAttribute("width",settings.width)
 canvas.setAttribute("height",settings.height)
 body.appendChild(canvas)
 let ctx = canvas.getContext("2d")
-// Obstacles xy storage
-let pipe=[]
-pipe[0]={
-  x:settings.width,
-  y:-350
-}
 
+// Keys controller
 let controller={
   up:false,
   down:false,
@@ -48,10 +59,11 @@ let controller={
   }
 }
 
+
 function refresh()
 {
-    ctx.clearRect(player.x, player.y-1, player.width, player.height-1)
-    ctx.clearRect(player.x, player.y+1, player.width, player.height+1)
+    // Background
+    ctx.drawImage(bgImg,0,0);
     // Jump
     if(controller.up==true){
       player.velY-=settings.jump
@@ -63,8 +75,8 @@ function refresh()
     player.velY*=settings.friction
 
     // Player limits
-    if(player.y>settings.height-settings.margin){
-      player.y = settings.height-settings.margin
+    if(player.y>settings.height-settings.margin-20){
+      player.y = settings.height-settings.margin-20
       player.velY = 0
     }
     else if (player.y<0){
@@ -74,7 +86,7 @@ function refresh()
 
     // Obstacles
     for(let i=0; i < pipe.length; i++){
-      ctx.clearRect(pipe[i].x+settings.speed, pipe[i].y, settings.obsWidth, settings.obsHeight)
+      ctx.clearRect(pipe[i].x, pipe[i].y, settings.obsWidth, settings.obsHeight)
       ctx.beginPath()
       ctx.rect(pipe[i].x, pipe[i].y, settings.obsWidth, settings.obsHeight)
       ctx.fillStyle = "green"
@@ -90,23 +102,15 @@ function refresh()
       ctx.fill()
       ctx.closePath()
 
-
-
-      if(player.x>pipe[i].x && (player.y <= pipe[i].y + settings.obsHeight)){
-
+      if(pipe[i].x == player.x+1){
+        player.score=player.score+1
+        console.log(player.score)
       }
-
       pipe[i].x-=settings.speed
     }
 
-
-
     // Building player
-    ctx.beginPath()
-    ctx.rect(player.x, player.y, player.width, player.height)
-    ctx.fillStyle = "red"
-    ctx.fill()
-    ctx.closePath()
+    ctx.drawImage(playerImg,player.x,player.y);
 
     // Building landscape
     ctx.beginPath()
@@ -115,12 +119,17 @@ function refresh()
     ctx.fill()
     ctx.closePath()
 
+    // Score
+    ctx.font = "60px Arial";
+    ctx.fillText(player.score, 10, 60);
+
+    // Loose conditions
+
+    if (player.loose){
+        return
+    }
     window.requestAnimationFrame(refresh);
 }
-
-window.addEventListener("keyup", controller.keyListener)
-window.addEventListener("keydown", controller.keyListener)
-window.requestAnimationFrame(refresh)
 
 function addObs(){
   pipe.unshift({
@@ -129,4 +138,8 @@ function addObs(){
  });
 }
 
-itv=setInterval(function(e){addObs()},3000)
+window.addEventListener("keyup", controller.keyListener)
+window.addEventListener("keydown", controller.keyListener)
+
+intervalObs=setInterval(function(e){addObs()},3500)
+window.requestAnimationFrame(refresh);
