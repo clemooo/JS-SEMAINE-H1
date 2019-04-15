@@ -1,11 +1,16 @@
 let settings={
+  speed:3,
   width:900,
   height:700,
   margin:150,
-  gravity:1,
+  gravity:1.5,
   friction:0.92,
-  jump:4,
+  jump:5,
+  gap:150,
+  obsWidth:125,
+  obsHeight:300
 }
+settings.obsHeight=(settings.height-settings.gap)/2
 
 let player={
   height:32,
@@ -24,12 +29,12 @@ canvas.setAttribute("width",settings.width)
 canvas.setAttribute("height",settings.height)
 body.appendChild(canvas)
 let ctx = canvas.getContext("2d")
-
-
-function init(){
-    window.requestAnimationFrame(refresh)
-  }
-init()
+// Obstacles xy storage
+let pipe=[]
+pipe[0]={
+  x:settings.width,
+  y:0
+}
 
 let controller={
   up:false,
@@ -63,12 +68,37 @@ function refresh()
       player.y = settings.height-settings.margin
       player.velY = 0
     }
-    else if (player.y<settings.margin-player.height){
-      player.y = settings.margin-player.height
+    else if (player.y<0){
+      player.y = 0
       player.velY = 0
     }
 
     // Obstacles
+    for(let i=0; i < pipe.length; i++){
+      ctx.clearRect(pipe[i].x+settings.speed, pipe[i].y, settings.obsWidth, settings.obsHeight)
+      ctx.beginPath()
+      ctx.rect(pipe[i].x, pipe[i].y, settings.obsWidth, settings.obsHeight)
+      ctx.fillStyle = "green"
+      ctx.fill()
+      ctx.closePath()
+
+      let constant = settings.obsHeight+settings.gap
+
+      ctx.clearRect(pipe[i].x+settings.speed, pipe[i].y+constant-1, settings.obsWidth, settings.obsHeight)
+      ctx.beginPath()
+      ctx.rect(pipe[i].x, pipe[i].y+constant, settings.obsWidth, settings.obsHeight)
+      ctx.fillStyle = "green"
+      ctx.fill()
+      ctx.closePath()
+
+      if(player.x>pipe[i].x && (player.y <= pipe[i].y + settings.obsHeight)){
+        console.log("perdu")
+      }
+
+      pipe[i].x-=settings.speed
+    }
+
+
 
     // Building player
     ctx.beginPath()
@@ -84,14 +114,9 @@ function refresh()
     ctx.fill()
     ctx.closePath()
 
-    ctx.beginPath()
-    ctx.rect(0, 0-player.height, settings.width, settings.margin)
-    ctx.fillStyle="blue"
-    ctx.fill()
-    ctx.closePath()
-
     window.requestAnimationFrame(refresh);
 }
 
 window.addEventListener("keyup", controller.keyListener)
 window.addEventListener("keydown", controller.keyListener)
+window.requestAnimationFrame(refresh)
