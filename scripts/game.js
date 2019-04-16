@@ -9,14 +9,14 @@ let settings={
   friction:0.92,
   jump:2.5,
   gap:200,
-  obsWidth:10,
+  obsWidth:180,
   obsHeight:900,
   obsIntval:900
 }
 
 let player={
-  height:50,
-  width:68,
+  height:63,
+  width:85,
   x:200,
   y:settings.height/2,
   velX:0,
@@ -37,8 +37,14 @@ pipe[0]={
 // Images import
 let playerImg = new Image()
 let bgImg = new Image()
+let pipeTopImg = new Image()
+let pipeBottomImg = new Image()
+let sandImg = new Image()
 playerImg.src = "./images/player.png"
-bgImg.src = "./images/bg.png"
+bgImg.src = "./images/wave.png"
+pipeTopImg.src = "./images/pipetop.png"
+pipeBottomImg.src = "./images/pipebottom.png"
+sandImg.src = "./images/sand.png"
 
 // Canvas setup
 let body = document.querySelector("body")
@@ -100,21 +106,9 @@ function refresh()
 
     // Obstacles
     for(let i=0; i < pipe.length; i++){
-      ctx.clearRect(pipe[i].x, pipe[i].y, settings.obsWidth, settings.obsHeight)
-      ctx.beginPath()
-      ctx.rect(pipe[i].x, pipe[i].y, settings.obsWidth, settings.obsHeight)
-      ctx.fillStyle = "green"
-      ctx.fill()
-      ctx.closePath()
-
+      ctx.drawImage(pipeTopImg,pipe[i].x,pipe[i].y+10);
       let constant = settings.obsHeight+settings.gap
-
-      ctx.clearRect(pipe[i].x+settings.speed, pipe[i].y+constant, settings.obsWidth, settings.obsHeight)
-      ctx.beginPath()
-      ctx.rect(pipe[i].x, pipe[i].y+constant, settings.obsWidth, settings.obsHeight)
-      ctx.fillStyle = "green"
-      ctx.fill()
-      ctx.closePath()
+      ctx.drawImage(pipeBottomImg,pipe[i].x,pipe[i].y+constant);
 
       // Increasing speed
       switch(player.score){
@@ -142,11 +136,7 @@ function refresh()
     ctx.drawImage(playerImg,player.x,player.y);
 
     // Building landscape
-    ctx.beginPath()
-    ctx.rect(0, settings.height-settings.margin+player.height, settings.width, settings.margin)
-    ctx.fillStyle="orange"
-    ctx.fill()
-    ctx.closePath()
+    ctx.drawImage(sandImg,0,settings.height-settings.margin+player.height);
 
     // Score
     ctx.beginPath()
@@ -157,10 +147,14 @@ function refresh()
 
     // Loose conditions
     let pipeTop = pipe[0].y + settings.obsHeight
-    console.log(pipeTop)
+    let pipeBottom = pipe[0].y+settings.obsHeight+settings.gap-player.height
     if (player.x+player.width>=pipe[0].x && player.y <= pipeTop){
       player.loose = true;
     }
+    else if (player.x+player.width>=pipe[0].x && player.y >= pipeBottom){
+      player.loose = true;
+    }
+
 
     if (player.loose){
         return
