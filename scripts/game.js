@@ -1,5 +1,7 @@
 let settings={
-  speed:9,
+  speed:12.5,
+  speedMedium:20,
+  speedHigh:25,
   width:1200,
   height:900,
   margin:150,
@@ -56,6 +58,9 @@ let controller={
       case 38: // Up
         controller.up = keyState
       break;
+      case 40:
+        controller.down = keyState
+      break;
     }
   }
 }
@@ -70,6 +75,11 @@ function refresh()
       player.velY-=settings.jump
       player.jumping=true
     }
+    //down
+    if(controller.down==true){
+      player.velY+=settings.jump
+      player.jumping=true
+    }
     // Player Physics
     player.velY+=settings.gravity
     player.y+=player.velY
@@ -77,10 +87,13 @@ function refresh()
 
     // Player limits
     if(player.y>settings.height-settings.margin-20){
+      player.loose=true
       player.y = settings.height-settings.margin-20
       player.velY = 0
+
     }
     else if (player.y<0){
+      player.loose=true
       player.y = 0
       player.velY = 0
     }
@@ -102,10 +115,22 @@ function refresh()
       ctx.fillStyle = "green"
       ctx.fill()
       ctx.closePath()
+
+      // Increasing speed
+      switch(player.score){
+        case 10:
+          settings.speed = settings.speedMedium
+        break;
+        case 20:
+          settings.speed = settings.speedHigh
+        break;
+      }
       pipe[i].x-=settings.speed
-      if(pipe[i].x == player.x+1){
+
+      // New pipe if success
+      if(pipe[i].x == player.x){
         player.score=player.score+1
-        pipe.push({
+        pipe.unshift({
            x : settings.width,
            y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350,
        })
@@ -128,8 +153,14 @@ function refresh()
     ctx.fillStyle="orange"
     ctx.font = "60px Arial"
     ctx.fillText(player.score, 10, 60)
-    ctx.closePath()
+    ctx.closePath
+
     // Loose conditions
+    let pipeTop = pipe[0].y + settings.obsHeight
+    console.log(pipeTop)
+    if (player.x+player.width>=pipe[0].x && player.y <= pipeTop){
+      player.loose = true;
+    }
 
     if (player.loose){
         return
