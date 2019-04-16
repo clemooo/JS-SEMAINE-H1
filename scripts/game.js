@@ -1,16 +1,12 @@
 let settings={
   speed:9,
-  speedDefault:9,
-  speedBoost:20,
   width:1200,
   height:900,
   margin:150,
-  gravity: 0.3,
+  gravity: 1,
   friction:0.92,
   jump:2.5,
-  gapMax:200,
-  gapMin: 120,
-  gapDifficulty:3,
+  gap:200,
   obsWidth:10,
   obsHeight:900,
   obsIntval:900
@@ -34,7 +30,6 @@ let pipe=[]
 pipe[0]={
   x:settings.width,
   y:-600,
-  gap:settings.gapMax
 }
 
 // Images import
@@ -61,9 +56,6 @@ let controller={
       case 38: // Up
         controller.up = keyState
       break;
-      case 40:
-        controller.down = keyState
-      break;
     }
   }
 }
@@ -76,11 +68,6 @@ function refresh()
     // up
     if(controller.up==true){
       player.velY-=settings.jump
-      player.jumping=true
-    }
-    // Down
-    if(controller.down==true){
-      player.velY+=settings.jump
       player.jumping=true
     }
     // Player Physics
@@ -107,7 +94,7 @@ function refresh()
       ctx.fill()
       ctx.closePath()
 
-      let constant = settings.obsHeight+pipe[i].gap
+      let constant = settings.obsHeight+settings.gap
 
       ctx.clearRect(pipe[i].x+settings.speed, pipe[i].y+constant, settings.obsWidth, settings.obsHeight)
       ctx.beginPath()
@@ -115,24 +102,15 @@ function refresh()
       ctx.fillStyle = "green"
       ctx.fill()
       ctx.closePath()
+      pipe[i].x-=settings.speed
       if(pipe[i].x == player.x+1){
         player.score=player.score+1
-        if(pipe[i].gap<=settings.gapMin){
-          pipe.push({
-             x : settings.width,
-             y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350,
-             gap : settings.gapMin
-         })
-        }else{
-          pipe.push({
-             x : settings.width,
-             y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350,
-             gap : settings.gapMax-1*settings.gapDifficulty
-         })
-        }
-
+        pipe.push({
+           x : settings.width,
+           y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350,
+       })
       }
-      pipe[i].x-=settings.speed
+
     }
 
     // Building player
