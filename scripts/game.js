@@ -1,6 +1,6 @@
 let settings={
-  speed:12.5,
-  speedMedium:20,
+  speed:10 ,
+  speedMedium:12.5,
   speedHigh:25,
   width:1200,
   height:900,
@@ -10,8 +10,7 @@ let settings={
   jump:2.5,
   gap:200,
   obsWidth:180,
-  obsHeight:900,
-  obsIntval:900
+  obsHeight:900
 }
 
 let player={
@@ -23,7 +22,15 @@ let player={
   velY:0,
   jumping:false,
   loose:false,
-  score:0
+  score:0,
+  coins:500
+}
+
+// Coins stockage
+let coin=[]
+coin[0]={
+  x:settings.width,
+  y:400,
 }
 
 // Obstacle stockage
@@ -35,16 +42,24 @@ pipe[0]={
 }
 
 // Images import
+let loopImgX = [
+  [bg]="0",
+  [fg]="0"
+]
 let playerImg = new Image()
 let bgImg = new Image()
 let pipeTopImg = new Image()
 let pipeBottomImg = new Image()
 let sandImg = new Image()
+let scorePlankImg = new Image()
+let coinImg = new Image()
 playerImg.src = "./images/player.png"
-bgImg.src = "./images/wave.png"
+bgImg.src = "./images/bg.png"
 pipeTopImg.src = "./images/pipetop.png"
 pipeBottomImg.src = "./images/pipebottom.png"
 sandImg.src = "./images/sand.png"
+scorePlankImg.src = "./images/plank.png"
+coinImg.src = "./images/coin.png"
 
 // Canvas setup
 let body = document.querySelector("body")
@@ -71,17 +86,17 @@ let controller={
   }
 }
 
-
 function refresh()
 {
     // Background
-    ctx.drawImage(bgImg,0,0);
-    // up
+    ctx.drawImage(bgImg,loopImgX[0],0);
+
+    // Player up
     if(controller.up==true){
       player.velY-=settings.jump
       player.jumping=true
     }
-    //down
+    // Player down
     if(controller.down==true){
       player.velY+=settings.jump
       player.jumping=true
@@ -109,6 +124,7 @@ function refresh()
       ctx.drawImage(pipeTopImg,pipe[i].x,pipe[i].y+10);
       let constant = settings.obsHeight+settings.gap
       ctx.drawImage(pipeBottomImg,pipe[i].x,pipe[i].y+constant);
+      ctx.drawImage(coinImg,pipe[i].x+50,pipe[i].y+settings.obsHeight+60);
 
       // Increasing speed
       switch(player.score){
@@ -123,11 +139,27 @@ function refresh()
 
       // New pipe if success
       if(pipe[i].x == player.x){
-        player.score=player.score+1
+        player.score+=1
+        player.coins+=1
         pipe.unshift({
            x : settings.width,
-           y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350,
+           y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350
        })
+      }
+      // Loose conditions
+      if (player.x < pipe[i].x + settings.obsWidth &&
+         player.x + player.width > pipe[i].x &&
+         player.y < pipe[i].y + settings.obsHeight &&
+         player.height + player.y > pipe[i].y)
+      {
+        player.loose=true
+      }
+      if (player.x < pipe[i].x + settings.obsWidth &&
+         player.x + player.width > pipe[i].x &&
+         player.y < pipe[i].y+constant + settings.obsHeight &&
+         player.height + player.y > pipe[i].y+constant-20)
+      {
+        player.loose=true
       }
 
     }
@@ -135,26 +167,33 @@ function refresh()
     // Building player
     ctx.drawImage(playerImg,player.x,player.y);
 
-    // Building landscape
-    ctx.drawImage(sandImg,0,settings.height-settings.margin+player.height);
+    // Building Foreground
+    ctx.drawImage(sandImg,loopImgX[1],settings.height-settings.margin+player.height);
 
-    // Score
+    // Coin Count
+    ctx.drawImage(coinImg,settings.width-100,20)
     ctx.beginPath()
     ctx.fillStyle="orange"
     ctx.font = "60px Arial"
-    ctx.fillText(player.score, 10, 60)
+    ctx.fillText(player.coins, settings.width-200, 80)
     ctx.closePath
 
-    // Loose conditions
-    let pipeTop = pipe[0].y + settings.obsHeight
-    let pipeBottom = pipe[0].y+settings.obsHeight+settings.gap-player.height
-    if (player.x+player.width>=pipe[0].x && player.y <= pipeTop){
-      player.loose = true;
+    // Loop images
+    for(let i =0; i<=loopImgX.length;i++){
+      if(loopImgX[i]< -settings.width){
+        loopImgX[i]=0
+      }
     }
-    else if (player.x+player.width>=pipe[0].x && player.y >= pipeBottom){
-      player.loose = true;
-    }
+    loopImgX[0]-=1
+    loopImgX[1]-=settings.speed
 
+    // Score
+    ctx.drawImage(scorePlankImg,0,0);
+    ctx.beginPath()
+    ctx.fillStyle="white"
+    ctx.font = "60px Arial"
+    ctx.fillText(player.score, 50, 70)
+    ctx.closePath
 
     if (player.loose){
         return
@@ -162,6 +201,21 @@ function refresh()
     window.requestAnimationFrame(refresh);
 }
 
-window.addEventListener("keyup", controller.keyListener)
-window.addEventListener("keydown", controller.keyListener)
-window.requestAnimationFrame(refresh);
+// Pay 20 coins to get at score 20
+function payToWin(){
+  if(player.coins>=20){
+    player.score=20
+    player.coins-=20
+    settings.speed=settings.speedHigh
+  }
+  play()
+}
+
+// Play
+function play(){
+  window.addEventListener("keyup", controller.keyListener)
+  window.addEventListener("keydown", controller.keyListener)
+  window.requestAnimationFrame(refresh);
+}
+
+play()
