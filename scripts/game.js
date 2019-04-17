@@ -1,7 +1,6 @@
 let settings={
   speed:10 ,
   speedMedium:12.5,
-  speedHigh:20,
   width:1200,
   height:900,
   margin:150,
@@ -11,7 +10,10 @@ let settings={
   gap:180,
   obsWidth:180,
   obsHeight:900,
-  frame:0
+  frame:0,
+  medusaVelY:-3,
+  medusaWidth:31,
+  medusaHeight:60,
 }
 
 let player={
@@ -40,6 +42,13 @@ coin[0]={
   y:400,
 }
 
+// Medusa
+let medusa=[]
+medusa[0]={
+  x:-200,
+  y:Math.floor(Math.random() * (0 - 600 + 1)) + 600
+}
+
 // Obstacle stockage
 let tabObs=[]
 let pipe=[]
@@ -62,6 +71,7 @@ let pipeBottomImg = new Image()
 let sandImg = new Image()
 let scorePlankImg = new Image()
 let coinImg = new Image()
+let medusaImg = new Image()
 playerImg.src = "./images/player.png"
 bgImg.src = "./images/bg.png"
 pipeTopImg.src = "./images/pipetop.png"
@@ -71,6 +81,7 @@ scorePlankImg.src = "./images/plank.png"
 coinImg.src = "./images/coin.png"
 playerUpImg.src = "./images/playerUp.png"
 playerDownImg.src = "./images/playerDown.png"
+medusaImg.src = "./images/medusa.png"
 
 // Canvas setup
 let body = document.querySelector("body")
@@ -148,9 +159,6 @@ function refresh()
         case 10:
           settings.speed = settings.speedMedium
         break;
-        case 30:
-          settings.speed = settings.speedHigh
-        break;
       }
       pipe[i].x-=settings.speed
 
@@ -179,6 +187,13 @@ function refresh()
       {
         loose()
       }
+      if (player.x < medusa[0].x + settings.medusaWidth &&
+         player.x + player.width > medusa[0].x+25 &&
+         player.y < medusa[0].y + settings.medusaHeight &&
+         player.height + player.y > medusa[0].y-20)
+      {
+        loose()
+      }
 
     }
 
@@ -202,6 +217,19 @@ function refresh()
       ctx.drawImage(playerUpImg,player.x,player.y);
     }
 
+
+    // Building medusa
+    if(settings.frame%200==0){
+      medusa[0].x=settings.speed*160
+      medusa[0].y=Math.floor(Math.random() * (0 - 600 + 1)) + 600
+    }
+    medusa[0].x-=settings.speed
+    medusa[0].y-=settings.medusaVelY
+    if(medusa[0].y<0 || medusa[0].y > settings.height-settings.margin-20){
+      console.log("bye")
+      settings.medusaVelY = -settings.medusaVelY
+    }
+    ctx.drawImage(medusaImg,medusa[0].x,medusa[0].y);
 
     // Building Foreground
     ctx.drawImage(sandImg,loopImgX[1],settings.height-settings.margin+player.height);
@@ -256,7 +284,7 @@ function refresh()
         ctx.beginPath()
         ctx.fillStyle="white"
         ctx.font = "35px Arial"
-        ctx.fillText("BEST SCORE :"+localStorage.getItem('bestScore'), 370,820)
+        ctx.fillText("BEST SCORE : "+localStorage.getItem('bestScore'), 370,820)
         ctx.closePath()
         // Title
         ctx.beginPath()
@@ -290,7 +318,7 @@ function payToWin(){
     player.score=20
     player.coins-=20
     localStorage.setItem("coins",player.coins)
-    settings.speed=settings.speedHigh
+    settings.speed=settings.speedMedium
   }
   play()
 }
