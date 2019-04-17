@@ -274,7 +274,7 @@ function refresh()
     ctx.drawImage(medusaImg,medusa[0].x,medusa[0].y);
 
     // Building ball
-    if(settings.frame%280==0){
+    if(settings.frame%140==0){
       ball[0].x=settings.width
       ball[0].y=Math.floor(Math.random() * (0 - (settings.height-settings.margin-20) + 1)) + (settings.height-settings.margin-20)
       ball[0].velY= Math.floor(Math.random() * (-15 - 15 + 1)) + 15
