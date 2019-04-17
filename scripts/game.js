@@ -246,7 +246,7 @@ function refresh()
     // Building Obstacles
     if(settings.frame%140==0){
       obs[0].x=settings.width
-      obs[0].y=Math.floor(Math.random() * (-850 - -350 + 1)) + -350
+      obs[0].y=Math.floor(Math.random() * (-1000 - -350 + 1)) + -350
     }
     obs[0].x-=settings.speed
     obs[0].y-=settings.obsVelY
