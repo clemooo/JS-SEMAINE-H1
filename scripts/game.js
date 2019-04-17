@@ -64,7 +64,7 @@ let ball = []
 ball[0]={
   x:-200,
   y:0,
-  velY: Math.floor(Math.random() * (-8 - 8 + 1)) + 8
+  velY: 0
 }
 
 // Obstacles
@@ -277,10 +277,10 @@ function refresh()
     if(settings.frame%280==0){
       ball[0].x=settings.width
       ball[0].y=Math.floor(Math.random() * (0 - (settings.height-settings.margin-20) + 1)) + (settings.height-settings.margin-20)
-      ball[0].velY= Math.floor(Math.random() * (-8 - 8 + 1)) + 8
+      ball[0].velY= Math.floor(Math.random() * (-15 - 15 + 1)) + 15
     }
     if(ball[0].y<0 || ball[0].y > settings.height-settings.margin-20){
-      settings.ballVelY = -ball[0].velY
+      ball[0].velY = -ball[0].velY
     }
     ball[0].x-=settings.ballVelX
     ball[0].y+=ball[0].velY
