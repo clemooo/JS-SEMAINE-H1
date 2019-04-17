@@ -42,13 +42,6 @@ checkStorage("skinChoice")
 checkStorage("isSkinTwoUnlocked")
 checkStorage("isSkinGoldUnlocked")
 
-// Coins stockage
-let coin=[]
-coin[0]={
-  x:settings.width,
-  y:400,
-}
-
 // Medusa
 let medusa=[]
 medusa[0]={
@@ -122,6 +115,10 @@ canvas.setAttribute("width",settings.width)
 canvas.setAttribute("height",settings.height)
 body.appendChild(canvas)
 let ctx = canvas.getContext("2d")
+ctx.shadowOffsetX = 0;
+ctx.shadowOffsetY = 50
+ctx.shadowBlur=10;
+ctx.shadowColor ="rgba(0,0,0,0.1)";
 
 // Keys controller
 let controller={
@@ -246,7 +243,7 @@ function refresh()
     // Building Obstacles
     if(settings.frame%140==0){
       obs[0].x=settings.width
-      obs[0].y=Math.floor(Math.random() * (-1000 - -350 + 1)) + -350
+      obs[0].y=Math.floor(Math.random() * (-950 - -350 + 1)) + -350
     }
     obs[0].x-=settings.speed
     obs[0].y-=settings.obsVelY
