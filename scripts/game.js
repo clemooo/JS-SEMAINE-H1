@@ -77,7 +77,8 @@ obs[0]={
 // Images import
 let loopImgX = [
   [bg]="0",
-  [fg]="0"
+  [fg]="0",
+  [ps]="0"
 ]
 let playerDefImg = new Image()
 let playerDefUpImg = new Image
@@ -96,6 +97,7 @@ let scorePlankImg = new Image()
 let coinImg = new Image()
 let medusaImg = new Image()
 let ballImg = new Image()
+let particlesImg = new Image()
 playerDefImg.src = "./images/0/player.png"
 playerDefUpImg.src = "./images/0/playerUp.png"
 playerDefDownImg.src = "./images/0/playerDown.png"
@@ -114,6 +116,7 @@ scorePlankImg.src = "./images/plank.png"
 coinImg.src = "./images/coin.png"
 medusaImg.src = "./images/medusa.png"
 ballImg.src = "./images/ball.png"
+particlesImg.src = "./images/particles.png"
 
 // Canvas setup
 let body = document.querySelector("body")
@@ -133,6 +136,9 @@ let controller={
       case 32: // Up
         controller.up = keyState
       break;
+      case 38: // Up
+        controller.up = keyState
+      break;
       case 13: //Enter
         replay()
       break;
@@ -150,8 +156,21 @@ function refresh()
     // Frame refresh
     settings.frame+=1
 
+    // Loop images
+    for(let i =0; i<=loopImgX.length;i++){
+      if(loopImgX[i]< -settings.width){
+        loopImgX[i]=0
+      }
+    }
+    loopImgX[0]-=1
+    loopImgX[1]-=settings.speed
+    loopImgX[2]-=2
+
     // Background
     ctx.drawImage(bgImg,loopImgX[0],0);
+
+    // Building particles
+    ctx.drawImage(particlesImg,loopImgX[2],0);
 
     // Player up
     if(controller.up==true){
@@ -178,15 +197,6 @@ function refresh()
     else if (player.y<0){
       loose()
     }
-
-    // Loop images
-    for(let i =0; i<=loopImgX.length;i++){
-      if(loopImgX[i]< -settings.width){
-        loopImgX[i]=0
-      }
-    }
-    loopImgX[0]-=1
-    loopImgX[1]-=settings.speed
 
     // Building player
     if(player.velY>5){
