@@ -37,12 +37,6 @@ let player={
   isSkinTwoUnlocked:localStorage.getItem('isSkinTwoUnlocked'),
   isSkinGoldUnlocked:localStorage.getItem('isSkinGoldUnlocked'),
 }
-
-if (localStorage.getItem('skinChoice') == null){
-  localStorage.setItem('skinChoice',0)
-  settings.skinChoice = parseInt(localStorage.getItem('skinChoice'))
-}
-
 checkStorage("coins")
 checkStorage("skinChoice")
 checkStorage("isSkinTwoUnlocked")
@@ -464,7 +458,7 @@ function refresh()
 function checkStorage(key){
   if (localStorage.getItem(key) == null){
     localStorage.setItem(key,0)
-    settings.key = parseInt(localStorage.getItem(key))
+    player.key = parseInt(localStorage.getItem(key))
   }
 }
 
@@ -494,10 +488,10 @@ function skinChange(skinKey){
         player.skinChoice=skinKey
         localStorage.setItem("skinChoice",skinKey)
       }
-      else if (parseInt(player.isSkinGoldUnlocked) == 0 && player.coins>=500){
+      else if (parseInt(player.isSkinGoldUnlocked) == 0 && player.coins>=200){
         player.skinChoice=skinKey
         localStorage.setItem("skinChoice",skinKey)
-        player.coins-=500
+        player.coins-=200
         localStorage.setItem("coins",player.coins)
         player.isSkinGoldUnlocked=1;
         localStorage.setItem("isSkinTwoUnlocked",player.isSkinGoldUnlocked)
