@@ -10,6 +10,7 @@ let settings={
   gap:180,
   obsWidth:180,
   obsHeight:900,
+  obsVelY:-0.5,
   frame:0,
   medusaVelY:5,
   medusaWidth:105,
@@ -234,6 +235,7 @@ function refresh()
       obs[0].y=Math.floor(Math.random() * (-850 - -350 + 1)) + -350
     }
     obs[0].x-=settings.speed
+    obs[0].y-=settings.obsVelY
     ctx.drawImage(pipeTopImg,obs[0].x,obs[0].y+10);
     let constant = settings.obsHeight+settings.gap
     ctx.drawImage(pipeBottomImg,obs[0].x,obs[0].y+constant);
