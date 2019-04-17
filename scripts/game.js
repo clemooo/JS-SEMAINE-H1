@@ -399,7 +399,7 @@ function refresh()
         else if (player.isSkinGoldUnlocked==0){
           ctx.fillStyle="white"
           ctx.font = "20px Arial"
-          ctx.fillText("Z TO BUY 200", 700,310)
+          ctx.fillText("E TO BUY 200", 700,310)
           ctx.closePath()
         }
         else {
