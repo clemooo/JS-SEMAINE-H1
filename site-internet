@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>FLAPPY BOARD</title>
+    <link rel="stylesheet" href="styles/game.css">
+  </head>
+
+    <body>
+
+<!--HEADER-->
+
+      <header class="header">
+        <a class="logo"><img src="image du header"></a>
+        <nav class="menu">
+          <a href="#">Synopsis</a>
+          <a href="#">Instructions</a>
+          <a href="#">Bonus</a>
+        </nav>
+      </header>
+
+<!--HEADER-->
+
+<!--CONTAINER-->
+
+      <a class="button" href="#">Jouer Maintenant</a>
+      <script type="text/javascript" src="scripts/game.js"></script>
+    </body>
+
+</html>
