@@ -20,7 +20,7 @@ let player={
   height:63,
   width:85,
   x:200,
-  y:settings.height/2,
+  y:100,
   velX:0,
   velY:0,
   jumping:false,
@@ -96,11 +96,8 @@ let controller={
   keyListener(event){
     let keyState=(event.type=="keydown")?true:false;
     switch (event.keyCode){
-      case 38: // Up
+      case 32: // Up
         controller.up = keyState
-      break;
-      case 40: //Down
-        controller.down = keyState
       break;
       case 13: //Enter
         replay()
@@ -125,11 +122,6 @@ function refresh()
     // Player up
     if(controller.up==true){
       player.velY-=settings.jump
-      player.jumping=true
-    }
-    // Player down
-    if(controller.down==true){
-      player.velY+=settings.jump
       player.jumping=true
     }
     // Player Physics
