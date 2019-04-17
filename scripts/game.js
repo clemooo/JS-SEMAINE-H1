@@ -11,9 +11,12 @@ let settings={
   obsWidth:180,
   obsHeight:900,
   frame:0,
-  medusaVelY:-5,
+  medusaVelY:5,
   medusaWidth:105,
   medusaHeight:60,
+  ballVelX:22,
+  ballWidth:50,
+  ballHeight:50
 }
 
 let player={
@@ -28,12 +31,18 @@ let player={
   score:0,
   coins:parseInt(localStorage.getItem('coins')),
   isBestScore:localStorage.getItem('bestScore'),
-  isPayToWin:localStorage.getItem('payToWin')
+  isPayToWin:localStorage.getItem('payToWin'),
+  skinChoice:parseInt(localStorage.getItem('skinChoice'))
 }
   if (localStorage.getItem('coins') == null){
     localStorage.setItem('coins',0)
     settings.coins = parseInt(localStorage.getItem('coins'))
   }
+  if (localStorage.getItem('skinChoice') == null){
+    localStorage.setItem('skinChoice',0)
+    settings.skinChoice = parseInt(localStorage.getItem('skinChoice'))
+  }
+
 
 // Coins stockage
 let coin=[]
@@ -46,9 +55,18 @@ coin[0]={
 let medusa=[]
 medusa[0]={
   x:-200,
-  y:Math.floor(Math.random() * (0 - 600 + 1)) + 600
+  y:0
 }
 
+// Ball
+let ball = []
+ball[0]={
+  x:-200,
+  y:0,
+  velY: Math.floor(Math.random() * (-8 - 8 + 1)) + 8
+}
+
+// Obstacles
 let obs=[]
 obs[0]={
   x:1200,
@@ -60,9 +78,15 @@ let loopImgX = [
   [bg]="0",
   [fg]="0"
 ]
-let playerImg = new Image()
-let playerUpImg = new Image
-let playerDownImg = new Image()
+let playerDefImg = new Image()
+let playerDefUpImg = new Image
+let playerDefDownImg = new Image()
+let playerTwoImg = new Image()
+let playerTwoUpImg = new Image
+let playerTwoDownImg = new Image()
+let playerGoldImg = new Image()
+let playerGoldUpImg = new Image
+let playerGoldDownImg = new Image()
 let bgImg = new Image()
 let pipeTopImg = new Image()
 let pipeBottomImg = new Image()
@@ -70,16 +94,25 @@ let sandImg = new Image()
 let scorePlankImg = new Image()
 let coinImg = new Image()
 let medusaImg = new Image()
-playerImg.src = "./images/player.png"
+let ballImg = new Image()
+playerDefImg.src = "./images/0/player.png"
+playerDefUpImg.src = "./images/0/playerUp.png"
+playerDefDownImg.src = "./images/0/playerDown.png"
+playerTwoImg.src = "./images/1/player.png"
+playerTwoUpImg.src = "./images/1/playerUp.png"
+playerTwoDownImg.src = "./images/1/playerDown.png"
+playerGoldImg.src = "./images/2/player.png"
+playerGoldUpImg.src = "./images/2/playerUp.png"
+playerGoldDownImg.src = "./images/2/playerDown.png"
+
 bgImg.src = "./images/bg.png"
 pipeTopImg.src = "./images/pipetop.png"
 pipeBottomImg.src = "./images/pipebottom.png"
 sandImg.src = "./images/sand.png"
 scorePlankImg.src = "./images/plank.png"
 coinImg.src = "./images/coin.png"
-playerUpImg.src = "./images/playerUp.png"
-playerDownImg.src = "./images/playerDown.png"
 medusaImg.src = "./images/medusa.png"
+ballImg.src = "./images/ball.png"
 
 // Canvas setup
 let body = document.querySelector("body")
@@ -133,6 +166,7 @@ function refresh()
     switch(player.score){
       case 10:
         settings.speed = settings.speedMedium
+        settings.medusaVelY=8
       break;
     }
 
@@ -155,13 +189,43 @@ function refresh()
 
     // Building player
     if(player.velY>5){
-      ctx.drawImage(playerDownImg,player.x,player.y);
+      switch (player.skinChoice){
+        case 0:
+          ctx.drawImage(playerDefDownImg,player.x,player.y);
+        break;
+        case 1:
+          ctx.drawImage(playerTwoDownImg,player.x,player.y);
+        break;
+        case 2:
+          ctx.drawImage(playerGoldDownImg,player.x,player.y);
+        break;
+      }
     }
     else if (player.velY <= 5 && player.velY >= -5){
-      ctx.drawImage(playerImg,player.x,player.y);
+      switch (player.skinChoice){
+        case 0:
+          ctx.drawImage(playerDefImg,player.x,player.y);
+        break;
+        case 1:
+          ctx.drawImage(playerTwoImg,player.x,player.y);
+        break;
+        case 2:
+          ctx.drawImage(playerGoldImg,player.x,player.y);
+        break;
+      }
     }
     else if (player.velY < -5){
-      ctx.drawImage(playerUpImg,player.x,player.y);
+      switch (player.skinChoice){
+        case 0:
+          ctx.drawImage(playerDefUpImg,player.x,player.y);
+        break;
+        case 1:
+          ctx.drawImage(playerTwoUpImg,player.x,player.y);
+        break;
+        case 2:
+          ctx.drawImage(playerGoldUpImg,player.x,player.y);
+        break;
+      }
     }
 
     // Building Obstacles
@@ -183,10 +247,12 @@ function refresh()
     // Building medusa
     if(settings.frame%210==0){
       medusa[0].x=settings.width
-      if(medusa[0].x > obs[0].x && medusa[0].x < obs[0].x+settings.obsWidth){
-        medusa[0].x= -200
+      if(medusa[0].x > obs[0].x && medusa[0].x+settings.medusaWidth < obs[0].x+settings.obsWidth){
+        while(medusa[0].x > obs[0].x && medusa[0].x+settings.medusaWidth < obs[0].x+settings.obsWidth){
+          medusa[0].x+=600
+        }
       }
-      medusa[0].y=Math.floor(Math.random() * (0 - 600 + 1)) + 600
+      medusa[0].y=Math.floor(Math.random() * (0 - (settings.height-settings.margin-20) + 1)) + (settings.height-settings.margin-20)
     }
     medusa[0].x-=settings.speed
     medusa[0].y-=settings.medusaVelY
@@ -194,6 +260,19 @@ function refresh()
       settings.medusaVelY = -settings.medusaVelY
     }
     ctx.drawImage(medusaImg,medusa[0].x,medusa[0].y);
+
+    // Building ball
+    if(settings.frame%280==0){
+      ball[0].x=settings.width
+      ball[0].y=Math.floor(Math.random() * (0 - (settings.height-settings.margin-20) + 1)) + (settings.height-settings.margin-20)
+      ball[0].velY= Math.floor(Math.random() * (-8 - 8 + 1)) + 8
+    }
+    if(ball[0].y<0 || ball[0].y > settings.height-settings.margin-20){
+      settings.ballVelY = -settings.ballVelY
+    }
+    ball[0].x-=settings.ballVelX
+    ball[0].y+=ball[0].velY
+    ctx.drawImage(ballImg,ball[0].x,ball[0].y);
 
     // Building Foreground
     ctx.drawImage(sandImg,loopImgX[1],settings.height-settings.margin+player.height);
@@ -236,7 +315,13 @@ function refresh()
     {
       loose()
     }
-
+    if (player.x < ball[0].x + settings.ballWidth &&
+       player.x + player.width > ball[0].x+25 &&
+       player.y < ball[0].y + settings.ballHeight &&
+       player.height + player.y > ball[0].y-20)
+    {
+      loose()
+    }
     // Building Game over if loose
     if (player.loose){
         if(player.isBestScore == null || player.isBestScore < player.score){
@@ -306,6 +391,7 @@ function payToWin(){
     player.coins-=20
     localStorage.setItem("coins",player.coins)
     settings.speed=settings.speedMedium
+    settings.medusaVelY=-8
   }
   play()
 }
