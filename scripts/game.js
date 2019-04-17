@@ -280,7 +280,7 @@ function refresh()
       ball[0].velY= Math.floor(Math.random() * (-8 - 8 + 1)) + 8
     }
     if(ball[0].y<0 || ball[0].y > settings.height-settings.margin-20){
-      settings.ballVelY = -settings.ballVelY
+      settings.ballVelY = -ball[0].velY
     }
     ball[0].x-=settings.ballVelX
     ball[0].y+=ball[0].velY
