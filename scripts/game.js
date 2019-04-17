@@ -8,9 +8,10 @@ let settings={
   gravity: 1,
   friction:0.92,
   jump:2.5,
-  gap:200,
+  gap:180,
   obsWidth:180,
-  obsHeight:900
+  obsHeight:900,
+  frame:0
 }
 
 let player={
@@ -23,10 +24,14 @@ let player={
   jumping:false,
   loose:false,
   score:0,
-  coins:500,
-  isBestScore:0
+  coins:parseInt(localStorage.getItem('coins')),
+  isBestScore:localStorage.getItem('bestScore'),
+  isPayToWin:localStorage.getItem('payToWin')
 }
-player.isBestScore=localStorage.getItem('bestScore')
+  if (localStorage.getItem('coins') == null){
+    localStorage.setItem('coins',0)
+    settings.coins = parseInt(localStorage.getItem('coins'))
+  }
 
 // Coins stockage
 let coin=[]
@@ -85,18 +90,26 @@ let controller={
       case 38: // Up
         controller.up = keyState
       break;
-      case 40:
+      case 40: //Down
         controller.down = keyState
       break;
-      case 13:
+      case 13: //Enter
         replay()
       break;
+      case 87: // Pay to win (W)
+        replay(true)
+      break;
+      // GhostMode
+      // Slow
     }
   }
 }
 
 function refresh()
 {
+    // Frame refresh
+    settings.frame+=1
+
     // Background
     ctx.drawImage(bgImg,loopImgX[0],0);
 
@@ -145,6 +158,7 @@ function refresh()
       if(pipe[i].x == player.x){
         player.score+=1
         player.coins+=1
+        localStorage.setItem('coins',player.coins)
         pipe.unshift({
            x : settings.width,
            y : Math.floor(Math.random() * (-850 - -350 + 1)) + -350
@@ -216,7 +230,7 @@ function refresh()
         // Background
         ctx.beginPath()
         ctx.fillStyle="black"
-        ctx.fillRect(350,300,500,500)
+        ctx.fillRect(350,300,500,550)
         ctx.closePath()
         // Replay
         ctx.beginPath()
@@ -228,11 +242,21 @@ function refresh()
         ctx.font = "35px Arial"
         ctx.fillText("PRESS ENTER TO REPLAY", 370,660)
         ctx.closePath()
+        // Pay To Win
+        ctx.beginPath()
+        ctx.fillStyle="orange"
+        ctx.fillRect(350,700,500,80)
+        ctx.closePath()
+        ctx.beginPath()
+        ctx.fillStyle="white"
+        ctx.font = "25px Arial"
+        ctx.fillText("PRESS W: START AT 20 FOR 20 COINS", 370,730)
+        ctx.closePath()
         // Best Score
         ctx.beginPath()
         ctx.fillStyle="white"
         ctx.font = "35px Arial"
-        ctx.fillText("BEST SCORE :"+localStorage.getItem('bestScore'), 370,760)
+        ctx.fillText("BEST SCORE :"+localStorage.getItem('bestScore'), 370,820)
         ctx.closePath()
         // Title
         ctx.beginPath()
@@ -262,9 +286,10 @@ function refresh()
 
 // Pay 20 coins to get at score 20
 function payToWin(){
-  if(player.coins>=20){
+  if(player.coins>=20 && player.isPayToWin == "true"){
     player.score=20
     player.coins-=20
+    localStorage.setItem("coins",player.coins)
     settings.speed=settings.speedHigh
   }
   play()
@@ -279,8 +304,16 @@ function play(){
 }
 
 // RePlay
-function replay(){
-  document.location.reload(true);
+function replay(isPayToWin){
+  if(player.loose){
+    if (isPayToWin){
+      localStorage.setItem("payToWin",true)
+    }
+    else {
+      localStorage.setItem("payToWin",false)
+    }
+    document.location.reload(true);
+  }
 }
 
 //loose
@@ -288,4 +321,4 @@ function loose(){
   player.loose=true
 }
 
-play()
+  payToWin()
