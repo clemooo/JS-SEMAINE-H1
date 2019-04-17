@@ -33,17 +33,20 @@ let player={
   coins:parseInt(localStorage.getItem('coins')),
   isBestScore:localStorage.getItem('bestScore'),
   isPayToWin:localStorage.getItem('payToWin'),
-  skinChoice:parseInt(localStorage.getItem('skinChoice'))
+  skinChoice:parseInt(localStorage.getItem('skinChoice')),
+  isSkinTwoUnlocked:localStorage.getItem('isSkinTwoUnlocked'),
+  isSkinGoldUnlocked:localStorage.getItem('isSkinGoldUnlocked'),
 }
-  if (localStorage.getItem('coins') == null){
-    localStorage.setItem('coins',0)
-    settings.coins = parseInt(localStorage.getItem('coins'))
-  }
-  if (localStorage.getItem('skinChoice') == null){
-    localStorage.setItem('skinChoice',0)
-    settings.skinChoice = parseInt(localStorage.getItem('skinChoice'))
-  }
 
+if (localStorage.getItem('skinChoice') == null){
+  localStorage.setItem('skinChoice',0)
+  settings.skinChoice = parseInt(localStorage.getItem('skinChoice'))
+}
+
+checkStorage("coins")
+checkStorage("skinChoice")
+checkStorage("isSkinTwoUnlocked")
+checkStorage("isSkinGoldUnlocked")
 
 // Coins stockage
 let coin=[]
@@ -145,8 +148,15 @@ let controller={
       case 87: // Pay to win (W)
         replay(true)
       break;
-      // GhostMode
-      // Slow
+      case 65: // Skin default (A)
+        skinChange(0)
+      break;
+      case 90: // Skin 2 (Z)
+        skinChange(1)
+      break;
+      case 69: // Skin 3 ()
+        skinChange(2)
+      break;
     }
   }
 }
@@ -342,8 +352,62 @@ function refresh()
         // Background
         ctx.beginPath()
         ctx.fillStyle="black"
-        ctx.fillRect(350,300,500,550)
+        ctx.fillRect(350,150,500,700)
         ctx.closePath()
+        // Skin default
+        ctx.drawImage(playerDefImg,400,200 );
+        if(player.skinChoice==0){
+          ctx.fillStyle="white"
+          ctx.font = "20px Arial"
+          ctx.fillText("SELECTED", 380,310)
+          ctx.closePath()
+        }
+        else{
+          ctx.fillStyle="white"
+          ctx.font = "20px Arial"
+          ctx.fillText("PRESS A", 400,310)
+          ctx.closePath()
+        }
+        // Skin 2
+        ctx.drawImage(playerTwoImg,570,200 );
+        if(player.skinChoice==1){
+          ctx.fillStyle="white"
+          ctx.font = "20px Arial"
+          ctx.fillText("SELECTED", 550,310)
+          ctx.closePath()
+        }
+        else if (player.isSkinTwoUnlocked==0){
+          ctx.fillStyle="white"
+          ctx.font = "20px Arial"
+          ctx.fillText("Z TO BUY 100", 540,310)
+          ctx.closePath()
+        }
+        else {
+          ctx.fillStyle="white"
+          ctx.font = "20px Arial"
+          ctx.fillText("PRESS Z", 560,310)
+          ctx.closePath()
+        }
+        // Skin 3
+        ctx.drawImage(playerGoldImg,720,200 );
+        if(player.skinChoice==2){
+          ctx.fillStyle="white"
+          ctx.font = "20px Arial"
+          ctx.fillText("SELECTED", 700,310)
+          ctx.closePath()
+        }
+        else if (player.isSkinGoldUnlocked==0){
+          ctx.fillStyle="white"
+          ctx.font = "20px Arial"
+          ctx.fillText("Z TO BUY 200", 700,310)
+          ctx.closePath()
+        }
+        else {
+          ctx.fillStyle="white"
+          ctx.font = "20px Arial"
+          ctx.fillText("PRESS E", 700,310)
+          ctx.closePath()
+        }
         // Replay
         ctx.beginPath()
         ctx.fillStyle="green"
@@ -394,6 +458,52 @@ function refresh()
         return
     }
     window.requestAnimationFrame(refresh);
+}
+
+// Check if key exist in storage, if not set it at 0
+function checkStorage(key){
+  if (localStorage.getItem(key) == null){
+    localStorage.setItem(key,0)
+    settings.key = parseInt(localStorage.getItem(key))
+  }
+}
+
+// SkinChange
+function skinChange(skinKey){
+  switch (skinKey){
+    case 0:
+      player.skinChoice=skinKey
+      localStorage.setItem("skinChoice",skinKey)
+    break;
+    case 1:
+      if(parseInt(player.isSkinTwoUnlocked) == 1){
+        player.skinChoice=skinKey
+        localStorage.setItem("skinChoice",skinKey)
+      }
+      else if (parseInt(player.isSkinTwoUnlocked) == 0 && player.coins>=100){
+        player.skinChoice=skinKey
+        localStorage.setItem("skinChoice",skinKey)
+        player.coins-=100
+        localStorage.setItem("coins",player.coins)
+        player.isSkinTwoUnlocked=1;
+        localStorage.setItem("isSkinTwoUnlocked",player.isSkinTwoUnlocked)
+      }
+    break;
+    case 2:
+      if(parseInt(player.isSkinGoldUnlocked) == 1){
+        player.skinChoice=skinKey
+        localStorage.setItem("skinChoice",skinKey)
+      }
+      else if (parseInt(player.isSkinGoldUnlocked) == 0 && player.coins>=500){
+        player.skinChoice=skinKey
+        localStorage.setItem("skinChoice",skinKey)
+        player.coins-=500
+        localStorage.setItem("coins",player.coins)
+        player.isSkinGoldUnlocked=1;
+        localStorage.setItem("isSkinTwoUnlocked",player.isSkinGoldUnlocked)
+      }
+    break;
+  }
 }
 
 // Pay 20 coins to get at score 20
