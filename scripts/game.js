@@ -2,12 +2,12 @@ let settings={
   speed:10 ,
   speedMedium:12.5,
   width:1200,
-  height:900,
+  height:720,
   margin:150,
   gravity: 1,
   friction:0.92,
   jump:2.5,
-  gap:180,
+  gap:200,
   obsWidth:180,
   obsHeight:900,
   obsVelY:-0.5,
@@ -61,7 +61,7 @@ ball[0]={
 let obs=[]
 obs[0]={
   x:1200,
-  y: Math.floor(Math.random() * (-850 - -350 + 1)) + -350
+  y: Math.floor(Math.random() * (-850 - -500 + 1)) + -500
 }
 
 // Images import
@@ -243,7 +243,7 @@ function refresh()
     // Building Obstacles
     if(settings.frame%140==0){
       obs[0].x=settings.width
-      obs[0].y=Math.floor(Math.random() * (-950 - -350 + 1)) + -350
+      obs[0].y=Math.floor(Math.random() * (-950 - -500 + 1)) + -500
     }
     obs[0].x-=settings.speed
     obs[0].y-=settings.obsVelY
@@ -294,7 +294,7 @@ function refresh()
     ctx.drawImage(coinImg,settings.width-100,20)
     ctx.beginPath()
     ctx.fillStyle="orange"
-    ctx.font = "60px Arial"
+    ctx.font = "60px VCR"
     ctx.fillText(player.coins, settings.width-200, 80)
     ctx.closePath
 
@@ -302,7 +302,7 @@ function refresh()
     ctx.drawImage(scorePlankImg,0,0);
     ctx.beginPath()
     ctx.fillStyle="white"
-    ctx.font = "60px Arial"
+    ctx.font = "60px VCR"
     ctx.fillText(player.score, 50, 70)
     ctx.closePath()
 
@@ -343,107 +343,107 @@ function refresh()
         // Background
         ctx.beginPath()
         ctx.fillStyle="black"
-        ctx.fillRect(350,150,500,700)
+        ctx.fillRect(350,20,500,700)
         ctx.closePath()
         // Skin default
-        ctx.drawImage(playerDefImg,400,200 );
+        ctx.drawImage(playerDefImg,400,70);
         if(player.skinChoice==0){
           ctx.fillStyle="white"
-          ctx.font = "20px Arial"
-          ctx.fillText("SELECTED", 380,310)
+          ctx.font = "20px VCR"
+          ctx.fillText("SELECTED", 380,180)
           ctx.closePath()
         }
         else{
           ctx.fillStyle="white"
-          ctx.font = "20px Arial"
-          ctx.fillText("PRESS A", 400,310)
+          ctx.font = "20px VCR"
+          ctx.fillText("PRESS A", 400,180)
           ctx.closePath()
         }
         // Skin 2
-        ctx.drawImage(playerTwoImg,570,200 );
+        ctx.drawImage(playerTwoImg,570,70 );
         if(player.skinChoice==1){
           ctx.fillStyle="white"
-          ctx.font = "20px Arial"
-          ctx.fillText("SELECTED", 550,310)
+          ctx.font = "20px VCR"
+          ctx.fillText("SELECTED", 550,180)
           ctx.closePath()
         }
         else if (player.isSkinTwoUnlocked==0){
           ctx.fillStyle="white"
-          ctx.font = "20px Arial"
-          ctx.fillText("Z TO BUY 100", 540,310)
+          ctx.font = "20px VCR"
+          ctx.fillText("Z TO BUY 100", 540,180)
           ctx.closePath()
         }
         else {
           ctx.fillStyle="white"
-          ctx.font = "20px Arial"
-          ctx.fillText("PRESS Z", 560,310)
+          ctx.font = "20px VCR"
+          ctx.fillText("PRESS Z", 560,180)
           ctx.closePath()
         }
         // Skin 3
-        ctx.drawImage(playerGoldImg,720,200 );
+        ctx.drawImage(playerGoldImg,720,70 );
         if(player.skinChoice==2){
           ctx.fillStyle="white"
-          ctx.font = "20px Arial"
-          ctx.fillText("SELECTED", 700,310)
+          ctx.font = "20px VCR"
+          ctx.fillText("SELECTED", 700,180)
           ctx.closePath()
         }
         else if (player.isSkinGoldUnlocked==0){
           ctx.fillStyle="white"
-          ctx.font = "20px Arial"
-          ctx.fillText("E TO BUY 200", 700,310)
+          ctx.font = "20px VCR"
+          ctx.fillText("E TO BUY 200", 700,180)
           ctx.closePath()
         }
         else {
           ctx.fillStyle="white"
-          ctx.font = "20px Arial"
-          ctx.fillText("PRESS E", 700,310)
+          ctx.font = "20px VCR"
+          ctx.fillText("PRESS E", 700,180)
           ctx.closePath()
         }
         // Replay
         ctx.beginPath()
         ctx.fillStyle="green"
-        ctx.fillRect(350,600,500,100)
+        ctx.fillRect(350,470,500,100)
         ctx.closePath()
         ctx.beginPath()
         ctx.fillStyle="white"
-        ctx.font = "35px Arial"
-        ctx.fillText("PRESS ENTER TO REPLAY", 370,660)
+        ctx.font = "35px VCR"
+        ctx.fillText("PRESS ENTER TO REPLAY", 370,530)
         ctx.closePath()
         // Pay To Win
         ctx.beginPath()
         ctx.fillStyle="orange"
-        ctx.fillRect(350,700,500,80)
+        ctx.fillRect(350,570,500,50)
         ctx.closePath()
         ctx.beginPath()
         ctx.fillStyle="white"
-        ctx.font = "25px Arial"
-        ctx.fillText("PRESS W: START AT 20 FOR 20 COINS", 370,730)
+        ctx.font = "25px VCR"
+        ctx.fillText("PRESS W: START AT 20 FOR 20 COINS", 355,600)
         ctx.closePath()
         // Best Score
         ctx.beginPath()
         ctx.fillStyle="white"
-        ctx.font = "35px Arial"
-        ctx.fillText("BEST SCORE : "+localStorage.getItem('bestScore'), 370,820)
+        ctx.font = "35px VCR"
+        ctx.fillText("BEST SCORE : "+localStorage.getItem('bestScore'), 370,690)
         ctx.closePath()
         // Title
         ctx.beginPath()
         ctx.fillStyle="white"
-        ctx.font = "60px Arial"
-        ctx.fillText("GAME OVER", 400, 400)
+        ctx.font = "60px VCR"
+        ctx.fillText("GAME OVER", 400, 270)
         ctx.closePath()
         // Score
-        ctx.drawImage(scorePlankImg,400, settings.height/2+10);
+        ctx.drawImage(scorePlankImg,400, 290);
         ctx.beginPath()
         ctx.fillStyle="white"
-        ctx.font = "60px Arial"
-        ctx.fillText(player.score, 460, settings.height/2+80)
+        ctx.font = "60px VCR"
+        ctx.fillText(player.score, 460, 370)
         ctx.closePath()
         // Coins
-        ctx.drawImage(coinImg,700,480)
+        ctx.drawImage(coinImg,700,290)
         ctx.beginPath()
         ctx.fillStyle="orange"
-        ctx.font = "60px Arial"
-        ctx.fillText(player.coins,580,540)
+        ctx.font = "60px VCR"
+        ctx.fillText(player.coins,580,350)
         ctx.closePath
 
         return
