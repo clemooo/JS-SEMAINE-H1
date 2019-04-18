@@ -64,6 +64,11 @@ obs[0]={
   y: Math.floor(Math.random() * (-850 - -500 + 1)) + -500
 }
 
+// Audio import
+var deadSound = document.querySelector("#deadSound");
+var coinSound = document.querySelector("#coinSound");
+var wingSound = document.querySelector("#wingSound");
+
 // Images import
 let loopImgX = [
   [bg]="0",
@@ -109,11 +114,11 @@ ballImg.src = "./images/ball.png"
 particlesImg.src = "./images/particles.png"
 
 // Canvas setup
-let body = document.querySelector("body")
+let cancasContainer = document.querySelector("#canvascontainer")
 let canvas = document.createElement("canvas")
 canvas.setAttribute("width",settings.width)
 canvas.setAttribute("height",settings.height)
-body.appendChild(canvas)
+cancasContainer.appendChild(canvas)
 let ctx = canvas.getContext("2d")
 ctx.shadowOffsetX = 0;
 ctx.shadowOffsetY = 50
@@ -128,15 +133,18 @@ let controller={
     let keyState=(event.type=="keydown")?true:false;
     switch (event.keyCode){
       case 32: // Up
+        wingSound.play()
         controller.up = keyState
       break;
       case 38: // Up
+        wingSound.play()
         controller.up = keyState
       break;
       case 13: //Enter
         replay()
       break;
       case 87: // Pay to win (W)
+        coinSound.play();
         replay(true)
       break;
       case 65: // Skin default (A)
@@ -252,6 +260,7 @@ function refresh()
     ctx.drawImage(pipeBottomImg,obs[0].x,obs[0].y+constant);
     ctx.drawImage(coinImg,obs[0].x+50,obs[0].y+settings.obsHeight+60);
     if(obs[0].x == player.x){
+      coinSound.play()
       player.score+=1
       player.coins+=1
       localStorage.setItem("coins",player.coins)
@@ -337,6 +346,7 @@ function refresh()
     }
     // Building Game over if loose
     if (player.loose){
+        deadSound.play()
         if(player.isBestScore == null || player.isBestScore < player.score){
           localStorage.setItem("bestScore",player.score)
         }
@@ -465,11 +475,13 @@ function skinChange(skinKey){
     case 0:
       player.skinChoice=skinKey
       localStorage.setItem("skinChoice",skinKey)
+      wingSound.play()
     break;
     case 1:
       if(parseInt(player.isSkinTwoUnlocked) == 1){
         player.skinChoice=skinKey
         localStorage.setItem("skinChoice",skinKey)
+        wingSound.play()
       }
       else if (parseInt(player.isSkinTwoUnlocked) == 0 && player.coins>=100){
         player.skinChoice=skinKey
@@ -478,12 +490,14 @@ function skinChange(skinKey){
         localStorage.setItem("coins",player.coins)
         player.isSkinTwoUnlocked=1;
         localStorage.setItem("isSkinTwoUnlocked",player.isSkinTwoUnlocked)
+        coinSound.play();
       }
     break;
     case 2:
       if(parseInt(player.isSkinGoldUnlocked) == 1){
         player.skinChoice=skinKey
         localStorage.setItem("skinChoice",skinKey)
+        wingSound.play()
       }
       else if (parseInt(player.isSkinGoldUnlocked) == 0 && player.coins>=200){
         player.skinChoice=skinKey
@@ -492,6 +506,7 @@ function skinChange(skinKey){
         localStorage.setItem("coins",player.coins)
         player.isSkinGoldUnlocked=1;
         localStorage.setItem("isSkinTwoUnlocked",player.isSkinGoldUnlocked)
+        coinSound.play();
       }
     break;
   }
