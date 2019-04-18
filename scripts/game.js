@@ -505,7 +505,7 @@ function skinChange(skinKey){
         player.coins-=200
         localStorage.setItem("coins",player.coins)
         player.isSkinGoldUnlocked=1;
-        localStorage.setItem("isSkinTwoUnlocked",player.isSkinGoldUnlocked)
+        localStorage.setItem("isSkinGoldUnlocked",player.isSkinGoldUnlocked)
         coinSound.play();
       }
     break;
